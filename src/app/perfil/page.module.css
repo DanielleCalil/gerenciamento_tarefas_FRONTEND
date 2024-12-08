@@ -65,7 +65,7 @@
     font-size: 3rem;
     font-weight: 600;
     margin-top: 3rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     text-align: center;
 }
 
@@ -82,13 +82,14 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
     width: 100%;
     box-sizing: border-box;
 }
 
 .profileContainer {
     text-align: center;
-    margin-right: 12rem;
+    margin-right: 10rem;
 }
 
 .imgContainer {
@@ -107,6 +108,10 @@
     display: none;
 }
 
+.inputContainer {
+    text-align: initial;
+}
+
 .inputGroup {
     flex-direction: column;
     margin-bottom: 1.4rem;
@@ -114,15 +119,15 @@
 }
 
 .textInput {
-    font-weight: 400;
-    font-size: 1.4rem;
+    font-weight: 500;
+    font-size: 1.5rem;
     width: 100%;
     margin: 0 auto;
 }
 
 .infos {
     font-weight: 300;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     width: 100%;
     margin: 0 auto;
     margin-top: 0.8rem;
@@ -225,8 +230,8 @@
     height: 5.5rem;
     padding: 0.7rem;
     margin: 1.25rem 0;
-    background-color: #FF735C;
-    color: white;
+    background-color: #ffffff;
+    color: rgb(12, 12, 12);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -238,7 +243,7 @@
 }
 
 .editarButton:hover {
-    background-color: #3F7263;
+    background-color: #ffffffd7;
     transition: 0.5s;
 }
 

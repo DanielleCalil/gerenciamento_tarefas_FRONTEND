@@ -183,8 +183,8 @@
 
 .active {
   background-color: #57bb9d!important;
-  box-shadow: inset 0 8px 14px rgba(0, 0, 0, 0.7), 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra interna para simular afundamento */
-  transform: translateY(6px); /* Leve movimento para baixo */
+  box-shadow: inset 0 8px 14px rgba(0, 0, 0, 0.7), 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(6px);
 }
 
 .situacaoButtons {
@@ -306,18 +306,13 @@
 }
 
 .editarb {
-  /* display: flex; */
-  /* justify-content: flex-end; */
   position: absolute;
   top: 10px;
   right: 10px;
-  /* width: 96%; */
-  /* margin: 2rem; */
-  /* margin-right: 2rem; */
 }
 
 .sairMenuGrande {
-  padding: 1rem 3rem;
+  padding: 0.8rem 2rem;
   background-color: #FFF;
   border: 1px red solid;
   border-radius: 30px;
@@ -396,8 +391,6 @@
 }
 
 .small {
-  /* visibility: hidden;  */
-  /* display: none; */
   color: #e74c3c;
   font-size: 1.4rem;
   margin-top: 0.5rem;
