@@ -17,7 +17,12 @@ export default function Tarefas() {
   const [isSaving, setIsSaving] = useState(false);
   const [filtroSituacao, setFiltroSituacao] = useState('');
   const [tarefasFiltradas, setTarefasFiltradas] = useState([]);
-  const [tarefas, setTarefas] = useState([]);
+  const [tarefas, setTarefas] = useState({
+    id: null,
+    titulo: '',
+    descricao: '',
+    userId: ''
+  });
   const router = useRouter();
 
   function logOff() {
@@ -30,7 +35,7 @@ export default function Tarefas() {
     if (!user) {
       router.push('/login');
     } else {
-      
+
     }
   }, []);
 
@@ -40,15 +45,23 @@ export default function Tarefas() {
 
   useEffect(() => {
     const carregarTarefas = async () => {
+      // Tenta obter o usuário do localStorage
       const user = JSON.parse(localStorage.getItem('user'));
+  
       console.log("Usuário no localStorage:", user);
-      if (!user) {
+  
+      // Se o user não existir ou não contiver a propriedade 'cod', redireciona para login
+      if (!user || !user.cod) {
+        console.log("Usuário não autenticado ou userId não encontrado.");
         router.push('/login');
         return;
       }
   
+      // Se o user for encontrado, exibe o cod do usuário
       console.log("User Cod enviado na requisição:", user.cod);
+  
       try {
+        // Envia o userId (user.cod) na requisição para carregar as tarefas
         const response = await api.post('/tarefas', { userId: user.cod });
         console.log("Tarefas recebidas:", response.data.dados);
         setTarefas(response.data.dados);
@@ -60,29 +73,44 @@ export default function Tarefas() {
     carregarTarefas();
   }, []);
   
-  
+
 
   useEffect(() => {
     if (filtroSituacao) {
       const tarefasFiltradas = tarefas.filter(tarefa => tarefa.status === filtroSituacao);
       setTarefasFiltradas(tarefasFiltradas);
     } else {
-      setTarefasFiltradas(tarefas);
+      setTarefasFiltradas([]);
     }
   }, [filtroSituacao, tarefas]);
 
 
   async function deletaTarefas(id) {
-
     try {
-      const response = await api.delete(`/tarefasDeletar/${id}`);
-
+      // Obtém o userId do localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+  
+      if (!user || !user.cod) {
+        alert('Usuário não autenticado!');
+        return;
+      }
+  
+      // Recupera o userId do usuário
+      const userId = user.cod;
+      console.log('userId no frontend:', userId);
+  
+      // Envia a requisição com o userId
+      const response = await api.delete(`/tarefasDeletar/${id}`, {
+        data: { userId },  // Inclui o userId no corpo da requisição
+      });
+  
       if (response.data && response.data.sucesso) {
         const tarefasRecarregadas = await api.post('/tarefas');
         setTarefas(tarefasRecarregadas.data.dados);
         console.log('Tarefa excluída com sucesso:', id);
       } else {
         console.error('Erro ao excluir a tarefa:', response.data.mensagem);
+        alert(response.data.mensagem);
       }
     } catch (error) {
       if (error.response) {
@@ -92,27 +120,35 @@ export default function Tarefas() {
       }
     }
   }
-
+  
   async function confirmarTarefa(id) {
     try {
-      const response = await api.post(`/tarefasConfirmar/${id}`);
-
-      if (response.data && response.data.sucesso) {
+      console.log('Enviando ID para confirmar tarefa:', id);
+      const response = await api.patch(`/tarefasConfirmar/${id}`);
+  
+      // Verificar a resposta do backend
+      if (response.status === 200 && response.data.sucesso) {
+        console.log('Tarefa concluída com sucesso:', id);
+        
+        // Recarregar as tarefas
         const tarefasRecarregadas = await api.post('/tarefas');
         setTarefas(tarefasRecarregadas.data.dados);
-
-        console.log('Tarefa concluída com sucesso:', id);
+        
+        console.log(response.data.mensagem);
       } else {
         console.error('Erro ao concluir a tarefa:', response.data.mensagem);
+        alert(response.data.mensagem);
       }
     } catch (error) {
       if (error.response) {
+        console.error('Erro da resposta:', error.response.data);
         alert(error.response.data.mensagem + '\n' + error.response.data.dados);
       } else {
         alert('Erro no front-end: ' + error.message);
       }
     }
   }
+  
 
   const [valida, setValida] = useState({
     titulo: {
@@ -140,7 +176,7 @@ export default function Tarefas() {
 
     setValida(prevState => ({
       ...prevState,
-      titulo: objTemp 
+      titulo: objTemp
     }));
 
     const testeResult = objTemp.mensagem.length === 0 ? 1 : 0;
@@ -176,16 +212,35 @@ export default function Tarefas() {
     itensValidados += validaDescricao();
   
     if (itensValidados === 2) {
+      // Recupera o usuário do localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      console.log('User recuperado do localStorage:', user);
+  
+      // Verifica se o objeto 'user' contém o campo 'cod'
+      if (!user || !user.cod) {
+        alert("ID do usuário não encontrado. Por favor, faça login.");
+        return;
+      }
+  
+      // Cria o objeto com os dados para enviar à API
+      const tarefaComId = {
+        userId: user.cod,  // Aqui usamos o 'cod' como 'userId'
+        titulo: tarefas.titulo,  // Campo 'titulo' do objeto 'tarefas'
+        descricao: tarefas.descricao,  // Campo 'descricao' do objeto 'tarefas'
+        status: 'pendente'  // Status fixo como 'pendente'
+      };
+  
       try {
-        const response = await api.post('/tarefasCadastrar', tarefaComUserId);
+        const response = await api.post('/tarefasCadastrar', tarefaComId);
         console.log('Resposta da API:', response);
   
         if (response.data.sucesso) {
-          window.location.reload(); 
+          window.location.reload();  // Recarrega a página em caso de sucesso
         }
       } catch (error) {
         console.log('Erro na requisição:', error);
   
+        // Exibe alertas de erro
         if (error.response) {
           alert(error.response.data.mensagem + '\n' + error.response.data.dados);
         } else {
@@ -194,12 +249,17 @@ export default function Tarefas() {
       }
     }
   }
+  
+
   console.log(tarefas);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setTarefas(prev => ({ ...prev, [name]: value }));
-  }
+    setTarefas((prevState) => ({
+      ...prevState,
+      [name]: value || '', // Garante que nunca seja undefined
+    }));
+  };
 
   return (
     <div className="containerGlobal">
@@ -316,7 +376,8 @@ export default function Tarefas() {
                   {tarefasFiltradas.length === 0 ? (
                     <h1>Nenhuma tarefa encontrada. Selecione um filtro.</h1>
                   ) : (
-                    tarefasFiltradas.map(tarefa => (
+                    // Verifica se tarefasFiltradas é um array e mapeia
+                    Array.isArray(tarefasFiltradas) && tarefasFiltradas.map(tarefa => (
                       <div className={styles.Item} key={tarefa.id}>
                         <div className={styles.bookInfo}>
                           <div>
