@@ -1,0 +1,351 @@
+.background {
+  width: 100%;
+  min-height: 100vh;
+  background-image: url('/back2.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.transparencia {
+  background-color: rgba(255, 255, 255, 0.096);
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  width: 100%;
+  max-width: 50%;
+}
+
+.card {
+  background-color: #ffffffe3;
+  border-radius: 6.5rem;
+  box-shadow: 30px 30px 30px rgb(0, 0, 0);
+  overflow: hidden;
+  height: auto;
+  max-width: 70%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: black;
+  transition: box-shadow 0.3s ease;
+}
+
+.imgContainer {
+  display: flex;
+}
+
+.imgCadastro {
+  width: 30rem;
+  height: auto;
+}
+
+.conteudo {
+  text-align: center;
+  width: 100%;
+}
+
+.cadastro {
+  font-size: 3rem;
+  font-weight: 600;
+  margin-top: 3rem;
+  margin-bottom: 2.2rem;
+}
+
+.inputField {
+  width: 90%;
+  height: 4.6rem;
+  padding: 1rem 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 3rem;
+  box-sizing: border-box;
+  font-size: 1.4rem;
+
+}
+
+.opcao {
+  width: 90%;
+  height: 4.6rem;
+  padding: 1rem 2rem;
+  margin: 1rem 0;
+  border: 1px solid #ccc;
+  border-radius: 3rem;
+  box-sizing: border-box;
+  font-size: 1.4rem;
+  color: #000;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.opcao option:focus {
+  color: #fff;
+  background-color: #FF735C;
+}
+
+/* Remove as setas do input de número */
+.conteudo input[type=number]::-webkit-outer-spin-button,
+.conteudo input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.inputField::placeholder {
+  color: #999;
+  font-size: 1.4rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  opacity: 1;
+}
+
+.sucesso {
+  /* position: absolute;
+      right: 20%;  */
+  display: none;
+  margin-left: 0.5rem;
+  font-size: 2.7rem;
+  color: #2ecc71;
+}
+
+.erro {
+  /* visibility: hidden; */
+  display: none;
+  margin-left: 0.5rem;
+  font-size: 2.7rem;
+  color: #e74c3c;
+}
+
+.passwordRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  /* gap: 0.5rem;  */
+}
+
+.passwordContainer {
+  position: relative;
+  flex-grow: 1;
+  /* Garante que os campos de senha ocupem o mesmo espaço */
+}
+
+.passwordContainer input {
+  width: 80%;
+  /* Faz os inputs ocuparem a largura total do container */
+  height: 4.6rem;
+  /* Mesma altura dos outros inputs */
+  padding: 1rem 2rem;
+  border: 1px solid #ccc;
+  border-radius: 3rem;
+  font-size: 1.4rem;
+  box-sizing: border-box;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 55px;
+  top: 40%;
+  /* transform: translateY(-50%); */
+  cursor: pointer;
+  color: #000;
+  font-size: 2rem;
+}
+
+.sexoForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 1.5rem;
+  font-weight: 300;
+  font-size: 1.4rem;
+  flex-direction: row;
+}
+
+.sexoForm legend {
+  margin: 0;
+  padding-right: 0.625rem;
+  font-weight: 300;
+  font-size: 1.4rem;
+}
+
+.sexoForm label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Estilizando o radio button personalizado */
+.sexoForm input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  margin: 0;
+}
+
+.sexoForm input[type="radio"]:checked {
+  border: 1px solid #FF735C;
+  background-color: #FF735C;
+}
+
+.sexoForm input[type="radio"]:checked::before {
+  content: '';
+  display: block;
+  border-radius: 50%;
+  background-color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.logar {
+  color: #FF735C;
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.logar a {
+  color: #FF735C;
+  text-decoration: underline;
+}
+
+.cadastroButton {
+  height: 4rem;
+  padding: 0.7rem 3rem;
+  margin: 2.5rem 0;
+  background-color: #FF735C;
+  color: white;
+  border: none;
+  border-radius: 3rem;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.4rem;
+}
+
+.cadastroButton:hover {
+  opacity: 0.5;
+  transition: 0.5s;
+}
+
+
+.doisItens {
+  display: flex;
+  width: 100%;
+}
+
+.divInput {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.divRadio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.small {
+  /* visibility: hidden;  */
+  /* display: none; */
+  color: #e74c3c;
+  font-size: 1.4rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.select {
+  padding: 0 1rem;
+  width: 90%;
+  font-size: 1.4rem;
+  height: 5rem;
+  border-radius: 1rem;
+  border: 2px solid #7F0000;
+  color: #7F0000;
+  text-align: center;
+}
+
+.select option:focus {
+  color: #FAFAFA;
+  background-color: #7F0000;
+}
+
+.select:focus {
+  box-shadow: 0 0 0 0;
+  outline: 0;
+}
+
+.input:focus {
+  box-shadow: 0 0 0 0;
+  outline: 0;
+  border-color: #B71C1C;
+}
+
+/* Error and Success */
+.formControl.success input {
+  border-color: #2ecc71;
+}
+
+.formControl.error input {
+  border-color: #e74c3c;
+}
+
+.formControl.success .divInput .sucesso {
+  /* visibility: visible; */
+  display: block;
+}
+
+.formControl.error .divInput .erro {
+  display: block;
+  /* visibility: visible; */
+}
+
+.formControl.error small {
+  /* visibility: visible; */
+  display: block;
+}
+
+.formControl.success .divInput select {
+  border-color: #2ecc71;
+}
+
+.formControl.error .divInput select {
+  border-color: #e74c3c;
+}

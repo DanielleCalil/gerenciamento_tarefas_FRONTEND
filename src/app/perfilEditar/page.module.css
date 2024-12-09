@@ -1,0 +1,335 @@
+
+.main {
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-height: 80vh;
+}
+
+.background {
+    width: 100%;
+    min-height: 100vh;
+    background-image: url('/back3.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.transparencia {
+    background-color: rgba(255, 255, 255, 0.096);
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    background-color: #ffffffe3;
+    border-radius: 6.5rem;
+    box-shadow: 30px 30px 30px rgb(0, 0, 0);
+    overflow: hidden;
+    height: auto;
+    max-width: 50%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: black;
+    transition: box-shadow 0.3s ease;
+}
+
+.titulo {
+    color: #000;
+  }
+
+.perfil {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.parentContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 1.25rem;
+    box-sizing: border-box;
+}
+
+.PIContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    max-width: 50%;
+    box-sizing: border-box;
+}
+
+.profileContainer {
+    text-align: center;
+    margin-right: 12rem;
+}
+
+.imgContainer {
+    margin-bottom: 1.25rem;
+}
+
+.imgContainer img {
+    width: 15rem;
+    height: 15rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 0.2rem solid #ccc;
+}
+
+/* Estilo para custom-file-upload */
+.customFile {
+    display: none;
+  }
+  
+  .customFileUpload {
+    display: flex;
+    flex-direction: column;
+    padding: 1.2rem 1rem;
+    cursor: pointer;
+    background-color: #3F7263;
+    color: white;
+    border: 1px solid #3F7263;
+    border-radius: 3rem;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+  
+  .customFileUpload:hover {
+    opacity: 0.5;
+    transition: 0.5s;
+  }
+
+.inputContainer {
+    width: 100%;
+}
+
+.inputField input[type="file"] {
+    display: none;
+}
+
+.inputGroup {
+    flex-direction: column;
+    margin-bottom: 1.4rem;
+    display: flex;
+}
+
+.listaCursos {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.inputCursos {
+    width: auto;
+}
+
+.opcaoCursos {
+    width: 100%;
+    height: auto;
+    padding: 1rem 2rem;
+    margin: 1rem 0;
+    border: 1px solid #ccc;
+    border-radius: 3rem;
+    box-sizing: border-box;
+    font-size: 1.4rem;
+    color: #000;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 2rem;
+    cursor: pointer;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.cursosButton {
+    height: 5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #FF735C;
+    color: white;
+    border: none;
+    border-radius: 3rem;
+    cursor: pointer;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.6rem;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    display: flex;
+}
+
+.cursosButton:hover {
+    opacity: 0.5;
+    transition: 0.5s;
+}
+
+.selected {
+    background-color: #3F7263;
+    color: #FFF;
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.2rem;
+    cursor: pointer;
+}
+
+
+.textInput {
+    font-weight: 300;
+    font-size: 1.4rem;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.inputField {
+    width: 100%;
+    height: 4.5rem;
+    padding: 2rem;
+    margin: 0.8rem 0;
+    border: 1px solid #CCC;
+    border-radius: 3rem;
+    box-sizing: border-box; 
+    background-color: #FFF;
+}
+
+/* Remove as setas do input de número */
+.inputField input[type=number]::-webkit-outer-spin-button,
+.inputField input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.opcao {
+    width: 100%;
+    height: 4.6rem;
+    padding: 1rem 2rem;
+    margin: 1rem 0;
+    border: 1px solid #ccc;
+    border-radius: 3rem;
+    box-sizing: border-box;
+    font-size: 1.4rem;
+    color: #000;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .opcao option:focus {
+    color: #fff;
+    background-color: #FF735C;
+  }
+
+.sexoForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 0.75rem;
+    font-weight: 300;
+    font-size: 1.4rem;
+    flex-direction: row;
+}
+
+.sexoForm legend {
+    margin: 0;
+    padding-right: 0.625rem;
+    font-weight: 300;
+    font-size: 1.4rem;
+}
+
+.sexoForm label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sexoForm input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+}
+
+.sexoForm input[type="radio"]:checked {
+    border: 1px solid #FF735C;
+    background-color: #FF735C;
+}
+
+.sexoForm input[type="radio"]:checked::before {
+    content: '';
+    display: block;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.redefinir {
+    color: #FF735C;
+    font-weight: 300;
+    font-size: 1.3rem;
+    margin-top: 4rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.redefinir a {
+    color: #FF735C;
+}
+
+.editar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.saveButton {
+    padding: 0.9rem 3rem;
+    margin: 2rem 0;
+    background-color: #FF735C;
+    color: white;
+    border: none;
+    border-radius: 3rem;
+    cursor: pointer;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.6rem;
+}
+
+.saveButton:hover {
+    opacity: 0.5;
+    transition: 0.5s;
+}
