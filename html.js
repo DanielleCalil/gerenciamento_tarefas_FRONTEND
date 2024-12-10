@@ -22,14 +22,9 @@ export default function Tarefas() {
   const [novaTarefa, setNovaTarefa] = useState({ titulo: '', descricao: '' });
   const [tarefaSelecionada, setTarefaSelecionada] = useState(null);
 
-  const handleEdtTarefa = (tarefas) => {
+  const handleEdtTarefa = () => {
     setTarefaSelecionada(tarefas);
     openModalEdtTarefa(); // Abre o modal
-  };
-
-  const handleCloseModal = () => {
-    setTarefaSelecionada(null); // Limpa os dados da tarefa
-    closeModalEdtTarefa(false); // Fecha o modal
   };
 
   const [showModalEdtTarefa, setShowModalEdtTarefa] = useState(false);
@@ -75,9 +70,6 @@ export default function Tarefas() {
   const valSucesso = styles.formControl + ' ' + styles.success;
   const valErro = styles.formControl + ' ' + styles.error;
 
-  console.log("tarefa selecionada", tarefaSelecionada);
-
-
   useEffect(() => {
     const carregarTarefas = async () => {
       const storedUser = localStorage.getItem('user');
@@ -100,8 +92,9 @@ export default function Tarefas() {
         const response = await api.post('/tarefas', payload);
         console.log("Tarefas recebidas:", response.data.dados);
 
+        // Evita a atualização redundante de tarefas
         if (JSON.stringify(response.data.dados) !== JSON.stringify(tarefas)) {
-          setTarefas(response.data.dados);
+          setTarefas(response.data.dados); // Só atualiza se os dados forem diferentes
         }
       } catch (error) {
         console.error(
@@ -166,30 +159,29 @@ export default function Tarefas() {
 
   async function confirmarTarefa(id) {
     const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.cod) {
-      console.error('User ou user.cod não fornecidos');
-      alert('User ou user.cod não encontrados');
-      return;
-    }
-  
     try {
       console.log('ID da tarefa:', id);
       console.log('UserID:', user.cod);
-  
+
+      if (!id || !user.cod) {
+        console.error('ID ou userId não fornecidos');
+        alert('ID ou userId não fornecidos');
+        return;
+      }
+      console.log('userId:', user.cod);
+
       console.log('Enviando ID da tarefa e userId:', id, user.cod);
-  
-      const response = await api.patch(`/tarefasConfirmar/${id}`, {
-        userId: user.cod
-      });
-  
+
+      const response = await api.patch(`/tarefasConfirmar/${id}`);
+
       if (response.status === 200 && response.data.sucesso) {
         console.log('Tarefa concluída com sucesso:', id);
-  
-        setTarefas((prevTarefas) =>
-          prevTarefas.map((tarefa) =>
+        setTarefas((prevTarefas) => {
+          const tarefasAtualizadas = Array.isArray(prevTarefas) ? prevTarefas : [];
+          return tarefasAtualizadas.map((tarefa) =>
             tarefa.id === id ? { ...tarefa, concluida: true } : tarefa
-          )
-        );
+          );
+        });
       } else {
         console.error('Erro ao concluir a tarefa:', response.data.mensagem);
         alert(response.data.mensagem);
@@ -198,15 +190,12 @@ export default function Tarefas() {
       if (error.response) {
         console.error('Erro da resposta:', error.response.data);
         alert(error.response.data.mensagem + '\n' + error.response.data.dados);
-      } else if (error.request) {
-        console.error('Erro de requisição:', error.request);
-        alert('Erro ao fazer a requisição. Tente novamente mais tarde.');
       } else {
         alert('Erro no front-end: ' + error.message);
       }
     }
   }
-  
+
   const [valida, setValida] = useState({
     titulo: {
       validado: valDefault,
@@ -424,35 +413,38 @@ export default function Tarefas() {
               </div>
 
               <div className={styles.container}>
-                <div className={styles.alinhamento}>
-                  {Array.isArray(tarefas) && tarefas.filter(tarefa => !filtroSituacao || tarefa.status === filtroSituacao).length === 0 ? (
-                    <h1>Nenhuma tarefa encontrada. Selecione um filtro.</h1>
-                  ) : (
-                    Array.isArray(tarefas) && tarefas.filter(tarefa => !filtroSituacao || tarefa.status === filtroSituacao).map(tarefa => (
-                      <div className={styles.Item} key={tarefa.id}> {/* Aqui o 'key' foi adicionado */}
-                        <div className={styles.Info}>
-                          <div className={styles.buttons}>
-                            <button onClick={() => deletaTarefas(tarefa.id, tarefa.userId)} className={styles.excluirTarefa}>X</button>
-                            <button type='button' onClick={() => handleEdtTarefa(tarefa)} className={styles.editarTarefa}>
-                              <IoPencilSharp size={18} color='#FFF' />
-                            </button>
-                            <ModalEdtTarefa
-                              show={showModalEdtTarefa}
-                              onClose={closeModalEdtTarefa}
-                              onConfirm={handleTarefa}
-                              inform={tarefaSelecionada}
-                            />
-                          </div>
-                          <h2 className={styles.Title}>{tarefa.titulo}</h2>
-                          <p className={styles.Description}>{tarefa.descricao}</p>
-                          {tarefa.status !== 'concluida' && (
-                            <button onClick={() => confirmarTarefa(tarefa.id)} className={styles.confirmarTarefa}>Concluir</button>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
+              <div className={styles.alinhamento}>
+  {Array.isArray(tarefas) && tarefas.filter(tarefa => !filtroSituacao || tarefa.status === filtroSituacao).length === 0 ? (
+    <h1>Nenhuma tarefa encontrada. Selecione um filtro.</h1>
+  ) : (
+    Array.isArray(tarefas) && tarefas.filter(tarefa => !filtroSituacao || tarefa.status === filtroSituacao).map(tarefa => (
+      <div className={styles.Item} key={tarefa.id}> {/* Aqui o 'key' foi adicionado */}
+        <div className={styles.Info}>
+          <div className={styles.buttons}>
+            <button onClick={() => deletaTarefas(tarefa.id, tarefa.userId)} className={styles.excluirTarefa}>X</button>
+            <button type='button' onClick={() => handleEdtTarefa(tarefa)} className={styles.editarTarefa}>
+              <IoPencilSharp size={18} color='#FFF' />
+            </button>
+            <ModalEdtTarefa
+              show={showModalEdtTarefa}
+              onClose={closeModalEdtTarefa}
+              onConfirm={handleTarefa}
+              tarefa={tarefaSelecionada}
+            />
+          </div>
+          <h2 className={styles.Title}>{tarefa.titulo}</h2>
+          <p className={styles.Description}>{tarefa.descricao}</p>
+          {tarefa.status !== 'concluida' && (
+            <button onClick={() => confirmarTarefa(tarefa.id)} className={styles.confirmarTarefa}>Concluir</button>
+          )}
+        </div>
+      </div>
+    ))
+  )}
+</div>
+
+
+
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { IoCheckmarkCircleOutline, IoAlertCircleOutline } from "react-icons/io5";
 import api from "../../services/api";
@@ -10,15 +10,21 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
     if (!show) return null;
     const router = useRouter();
 
+    useEffect(() => {
+        if (inform) {
+          setEdtTarefa(inform);
+        }
+      }, [inform]);
+
     const user = JSON.parse(localStorage.getItem('user'));
 
     const [edtTarefa, setEdtTarefa] = useState({
-        "userId": user.cod,
-        "id": inform?.id || '',
-        "titulo": inform?.titulo || '',
-        "descricao": inform?.descricao || '',
-        "status": inform?.status || '',
+        id: "",
+        titulo: "",
+        descricao: "",
+        status: ""
     });
+    const [tarefaEditada, setTarefaEditada] = useState({ titulo: '', descricao: '' });
 
     const valDefault = styles.formControl;
     const valSucesso = styles.formControl + ' ' + styles.success;
@@ -42,8 +48,8 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
 
     function validaTitulo() {
         let objTemp = {
-            validado: valSucesso, // css referente ao estado de validação
-            mensagem: [] // array de mensagens de validação
+            validado: valSucesso,
+            mensagem: []
         };
 
         if (!edtTarefa?.titulo || edtTarefa.titulo.length < 5) {
@@ -52,8 +58,8 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
         }
 
         setValida(prevState => ({
-            ...prevState, // mantém os valores anteriores
-            titulo: objTemp // atualiza apenas o campo 'titulo'
+            ...prevState,
+            titulo: objTemp
         }));
 
         const testeResult = objTemp.mensagem.length === 0 ? 1 : 0;
@@ -62,8 +68,8 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
 
     function validaDescricao() {
         let objTemp = {
-            validado: valSucesso, // css referente ao estado de validação
-            mensagem: [] // array de mensagens de validação
+            validado: valSucesso,
+            mensagem: []
         };
 
         if (!edtTarefa?.descricao || edtTarefa.descricao.length < 5) {
@@ -72,8 +78,8 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
         }
 
         setValida(prevState => ({
-            ...prevState, // mantém os valores anteriores
-            descricao: objTemp // atualiza apenas o campo 'descricao'
+            ...prevState,
+            descricao: objTemp
         }));
 
         const testeResult = objTemp.mensagem.length === 0 ? 1 : 0;
@@ -90,19 +96,33 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
         if (itensValidados === 2) {
             console.log("id do user:", user.cod);
             console.log("id da tarefa:", edtTarefa.id);
-            
+    
             let response;
+    
+            let edtComId = {
+                userId: user.cod,
+                id: edtTarefa.id,
+                titulo: edtTarefa.titulo,
+                descricao: edtTarefa.descricao,
+                status: edtTarefa.status,
+            };
+    
             try {
                 console.log("ID da tarefa:", edtTarefa.id);
                 if (edtTarefa.id) {
-                    response = await api.patch(`/tarefasEditar/${edtTarefa.id}`, edtTarefa);
+                    response = await api.patch(`/tarefasEditar/${edtTarefa.id}`, edtComId);
                 } else {
                     alert("ID da tarefa não encontrado");
                 }
-                
+    
                 if (response.data.sucesso) {
                     alert("Tarefa editada com sucesso!");
-                    window.location.reload();
+                    setEdtTarefa((prevEdtTarefas) => {
+                        const tarefaEditada = Array.isArray(prevEdtTarefas) ? prevEdtTarefas : [];
+                        return [...tarefaEditada]
+                    });
+                    setEdtTarefa({ id: '', titulo: '', descricao: '', status: '' });
+                    onClose();
                 }
             } catch (error) {
                 if (error.response) {
