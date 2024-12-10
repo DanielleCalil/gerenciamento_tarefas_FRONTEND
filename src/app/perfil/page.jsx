@@ -24,22 +24,39 @@ export default function Perfil() {
 
     }, []);
 
-    async function carregaPerfil(user) {
-
-        const dados = { id: user };
-
+    async function carregaPerfil() {
+        const storedUser = localStorage.getItem('user');
+        const user = storedUser ? JSON.parse(storedUser) : null;
+    
+        console.log("Usuário no localStorage:", user);
+    
+        if (!user || typeof user.cod === 'undefined' || user.cod === null) {
+          console.log("Usuário não autenticado ou 'cod' inválido.");
+          router.push('/login');
+          return;
+        }
+    
+        console.log("User Cod enviado na requisição:", user.cod);
+    
+        
+    
         try {
-            const response = await api.post('/usuarios', dados);
-            console.log(response.data.dados);
-            setPerfil(response.data.dados);
+            const dados = { id: user.cod };
+            const response = await api.post('/usuarios', dados); 
+    
+            console.log(response.data.dados);  // Exibe os dados retornados do servidor
+            setPerfil(response.data.dados);  // Atualiza o perfil do usuário na interface
         } catch (error) {
             if (error.response) {
-                alert(error.response.data.mensagem + '\n' + error.response.data.dados);
+                // Erro retornado pelo backend
+                alert(`Erro: ${error.response.data.mensagem}\nDetalhes: ${error.response.data.dados}`);
             } else {
-                alert('Erro no front-end' + '\n' + error);
+                // Erro no frontend (na comunicação com o backend)
+                alert('Erro no front-end: ' + error);
             }
         }
     }
+    
 
 
 

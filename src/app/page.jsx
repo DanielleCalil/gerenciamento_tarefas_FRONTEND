@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import Image from "next/image";
 import styles from "./page.module.css";
 import Link from 'next/link';
-import { IoLogOutOutline, IoPersonOutline, IoCheckmarkCircleOutline, IoAlertCircleOutline } from "react-icons/io5";
+import { IoLogOutOutline, IoPersonOutline, IoCheckmarkCircleOutline, IoAlertCircleOutline, IoPencilSharp } from "react-icons/io5";
 import { useRouter } from 'next/navigation';
 
+import ModalEdtTarefa from '../componentes/modalEdtTarefa/page';
 import api from '../services/api';
 
 export default function Tarefas() {
@@ -23,6 +24,37 @@ export default function Tarefas() {
     descricao: '',
     userId: ''
   });
+
+  const handleEdtTarefa = () => {
+    event.preventDefault();
+    openModalEdtTarefa(); // Abre o modal
+  };
+
+  const [showModalEdtTarefa, setShowModalEdtTarefa] = useState(false);
+  const openModalEdtTarefa = () => setShowModalEdtTarefa(true);
+  const closeModalEdtTarefa = () => setShowModalEdtTarefa(false);
+  const handleTarefa = () => {
+    setShowModalEdtTarefa(false);
+  };
+
+  const [inputValueTitulo, setInputValueTitulo] = useState("");
+  const handleInputChangeTitulo = (e) => {
+    const { value } = e.target;
+    setTarefas((prevState) => ({
+      ...prevState,
+      titulo: value,
+    }));
+  };
+  const [inputValueDescricao, setInputValueDescricao] = useState("");
+  const handleInputChangeDescricao = (e) => {
+    const { value } = e.target;
+    setTarefas((prevState) => ({
+      ...prevState,
+      descricao: value,
+    }));
+  };
+
+
   const router = useRouter();
 
   function logOff() {
@@ -34,10 +66,9 @@ export default function Tarefas() {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) {
       router.push('/login');
-    } else {
-
     }
   }, []);
+
 
   const valDefault = styles.formControl;
   const valSucesso = styles.formControl + ' ' + styles.success;
@@ -45,35 +76,37 @@ export default function Tarefas() {
 
   useEffect(() => {
     const carregarTarefas = async () => {
-      // Tenta obter o usuário do localStorage
-      const user = JSON.parse(localStorage.getItem('user'));
-  
+      const storedUser = localStorage.getItem('user');
+      const user = storedUser ? JSON.parse(storedUser) : null;
+
       console.log("Usuário no localStorage:", user);
-  
-      // Se o user não existir ou não contiver a propriedade 'cod', redireciona para login
-      if (!user || !user.cod) {
-        console.log("Usuário não autenticado ou userId não encontrado.");
+
+      if (!user || typeof user.cod === 'undefined' || user.cod === null) {
+        console.log("Usuário não autenticado ou 'cod' inválido.");
         router.push('/login');
         return;
       }
-  
-      // Se o user for encontrado, exibe o cod do usuário
+
       console.log("User Cod enviado na requisição:", user.cod);
-  
+
       try {
-        // Envia o userId (user.cod) na requisição para carregar as tarefas
-        const response = await api.post('/tarefas', { userId: user.cod });
+        const payload = { userId: user.cod };
+        console.log("Payload enviado:", payload);
+
+        const response = await api.post('/tarefas', payload);
         console.log("Tarefas recebidas:", response.data.dados);
+
         setTarefas(response.data.dados);
       } catch (error) {
-        console.error("Erro ao carregar as tarefas", error);
+        console.error(
+          "Erro ao carregar as tarefas",
+          error.response?.data || error.message
+        );
       }
     };
-  
+
     carregarTarefas();
   }, []);
-  
-
 
   useEffect(() => {
     if (filtroSituacao) {
@@ -86,28 +119,29 @@ export default function Tarefas() {
 
 
   async function deletaTarefas(id) {
+    const user = JSON.parse(localStorage.getItem('user'));
     try {
-      // Obtém o userId do localStorage
-      const user = JSON.parse(localStorage.getItem('user'));
-  
-      if (!user || !user.cod) {
-        alert('Usuário não autenticado!');
+      console.log('ID da tarefa:', id);
+      console.log('UserID:', user.cod);
+
+      if (!id || !user.cod) {
+        console.error('ID ou userId não fornecidos');
+        alert('ID ou userId não fornecidos');
         return;
       }
-  
-      // Recupera o userId do usuário
-      const userId = user.cod;
-      console.log('userId no frontend:', userId);
-  
-      // Envia a requisição com o userId
+
+      console.log('Enviando ID da tarefa e userId:', id, user.cod);
+
+      // Envia a requisição com o userId no corpo da requisição
       const response = await api.delete(`/tarefasDeletar/${id}`, {
-        data: { userId },  // Inclui o userId no corpo da requisição
+        data: {
+          userId: user.cod, // Inclui o userId no corpo da requisição
+        }
       });
-  
+
       if (response.data && response.data.sucesso) {
-        const tarefasRecarregadas = await api.post('/tarefas');
-        setTarefas(tarefasRecarregadas.data.dados);
         console.log('Tarefa excluída com sucesso:', id);
+        window.location.reload();
       } else {
         console.error('Erro ao excluir a tarefa:', response.data.mensagem);
         alert(response.data.mensagem);
@@ -120,21 +154,31 @@ export default function Tarefas() {
       }
     }
   }
-  
+
+
   async function confirmarTarefa(id) {
+    const user = JSON.parse(localStorage.getItem('user'));
     try {
-      console.log('Enviando ID para confirmar tarefa:', id);
+      console.log('ID da tarefa:', id);
+      console.log('UserID:', user.cod);
+
+      if (!id || !user.cod) {
+        console.error('ID ou userId não fornecidos');
+        alert('ID ou userId não fornecidos');
+        return;
+      }
+      console.log('userId:', user.cod); // Verifica se userId está definido corretamente
+
+      console.log('Enviando ID da tarefa e userId:', id, user.cod);
+
+      // Enviar a requisição para confirmar a tarefa, incluindo tanto o id da tarefa quanto o userId
       const response = await api.patch(`/tarefasConfirmar/${id}`);
-  
+
       // Verificar a resposta do backend
       if (response.status === 200 && response.data.sucesso) {
         console.log('Tarefa concluída com sucesso:', id);
-        
-        // Recarregar as tarefas
-        const tarefasRecarregadas = await api.post('/tarefas');
-        setTarefas(tarefasRecarregadas.data.dados);
-        
-        console.log(response.data.mensagem);
+
+        window.location.reload();
       } else {
         console.error('Erro ao concluir a tarefa:', response.data.mensagem);
         alert(response.data.mensagem);
@@ -148,7 +192,11 @@ export default function Tarefas() {
       }
     }
   }
-  
+
+
+
+
+
 
   const [valida, setValida] = useState({
     titulo: {
@@ -207,40 +255,35 @@ export default function Tarefas() {
   async function handleSubmit(event) {
     event.preventDefault();
     let itensValidados = 0;
-  
+
     itensValidados += validaTitulo();
     itensValidados += validaDescricao();
-  
+
     if (itensValidados === 2) {
-      // Recupera o usuário do localStorage
       const user = JSON.parse(localStorage.getItem('user'));
       console.log('User recuperado do localStorage:', user);
-  
-      // Verifica se o objeto 'user' contém o campo 'cod'
+
       if (!user || !user.cod) {
-        alert("ID do usuário não encontrado. Por favor, faça login.");
+        alert('ID do usuário não encontrado. Por favor, faça login.');
         return;
       }
-  
-      // Cria o objeto com os dados para enviar à API
+
       const tarefaComId = {
-        userId: user.cod,  // Aqui usamos o 'cod' como 'userId'
-        titulo: tarefas.titulo,  // Campo 'titulo' do objeto 'tarefas'
-        descricao: tarefas.descricao,  // Campo 'descricao' do objeto 'tarefas'
-        status: 'pendente'  // Status fixo como 'pendente'
+        userId: user.cod,
+        titulo: tarefas.titulo,
+        descricao: tarefas.descricao,
+        status: 'pendente',
       };
-  
+
       try {
         const response = await api.post('/tarefasCadastrar', tarefaComId);
         console.log('Resposta da API:', response);
-  
+
         if (response.data.sucesso) {
-          window.location.reload();  // Recarrega a página em caso de sucesso
+          window.location.reload(); // Recarrega a página em caso de sucesso
         }
       } catch (error) {
         console.log('Erro na requisição:', error);
-  
-        // Exibe alertas de erro
         if (error.response) {
           alert(error.response.data.mensagem + '\n' + error.response.data.dados);
         } else {
@@ -249,17 +292,7 @@ export default function Tarefas() {
       }
     }
   }
-  
-
   console.log(tarefas);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTarefas((prevState) => ({
-      ...prevState,
-      [name]: value || '', // Garante que nunca seja undefined
-    }));
-  };
 
   return (
     <div className="containerGlobal">
@@ -303,8 +336,9 @@ export default function Tarefas() {
                           <div className={styles.divInput}>
                             <input
                               type="text"
-                              value={tarefas.titulo}
-                              onChange={(e) => setTarefas({ ...tarefas, titulo: e.target.value })}
+                              name="titulo"
+                              value={tarefas.titulo || ''}
+                              onChange={handleInputChangeTitulo}
                               className={`${styles.inputField} ${styles.nomeInput}`}
                               aria-label="Titulo da tarefa"
                             />
@@ -320,7 +354,6 @@ export default function Tarefas() {
                       <div className={styles.editar}>
                         <button
                           type="submit"
-                          onClick={handleSubmit}
                           className={styles.saveButton}
                         >
                           {isSaving ? 'Salvando...' : 'Salvar'}
@@ -334,8 +367,9 @@ export default function Tarefas() {
                         <div className={styles.divInput}>
                           <input
                             type="text"
-                            value={tarefas.descricao}
-                            onChange={(e) => setTarefas({ ...tarefas, descricao: e.target.value })}
+                            name="descricao"
+                            value={tarefas.descricao || ''}
+                            onChange={handleInputChangeDescricao}
                             className={`${styles.inputField} ${styles.nomeInput}`}
                             aria-label="Descrição da tarefa"
                           />
@@ -376,17 +410,30 @@ export default function Tarefas() {
                   {tarefasFiltradas.length === 0 ? (
                     <h1>Nenhuma tarefa encontrada. Selecione um filtro.</h1>
                   ) : (
-                    // Verifica se tarefasFiltradas é um array e mapeia
                     Array.isArray(tarefasFiltradas) && tarefasFiltradas.map(tarefa => (
                       <div className={styles.Item} key={tarefa.id}>
-                        <div className={styles.bookInfo}>
-                          <div>
-                            <button onClick={() => deletaTarefas(tarefa.id)} className={styles.excluirTarefa}>X</button>
+                        <div className={styles.Info}>
+                          <div style={{ width: '100%' }}>
+                            <button onClick={() => deletaTarefas(tarefa.id, tarefa.userId)} className={styles.excluirTarefa}>X</button>
+                            <button type='button' onClick={handleEdtTarefa} className={styles.editarTarefa}><IoPencilSharp size={20} color='#FFF'/></button>
+                          <ModalEdtTarefa
+                            show={showModalEdtTarefa}
+                            onClose={closeModalEdtTarefa}
+                            onConfirm={handleTarefa}
+                            inform={{
+                              id:tarefa.id,
+                              titulo:tarefa.titulo,
+                              descricao:tarefa.descricao,
+                              status:tarefa.status
+                            }}
+                          />
                             <h2 className={styles.Title}>{tarefa.titulo}</h2>
                           </div>
                           <p className={styles.Description}>{tarefa.descricao}</p>
-                          <button onClick={() => confirmarTarefa(tarefa.id)} className={styles.confirmarTarefa}>Concluir</button>
-                          {/* <button onClick={() => handleEdit(tarefa.id)} className={styles.editarTarefa}>Editar</button> */}
+                          {tarefa.status !== 'concluida' && (
+                            <button onClick={() => confirmarTarefa(tarefa.id)} className={styles.confirmarTarefa}>Concluir</button>
+                          )}
+                          
                         </div>
                       </div>
                     ))
