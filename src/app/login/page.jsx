@@ -1,9 +1,7 @@
 "use client"
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
-import { IoSearchOutline } from "react-icons/io5";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 
 import api from '../../services/api';
@@ -50,7 +48,6 @@ export default function Login() {
                     cod: usuario.id,
                     nome: usuario.nome,
                 };
-                console.log(objLogado);
 
                 localStorage.clear();
                 localStorage.setItem('user', JSON.stringify(objLogado));
@@ -135,15 +132,6 @@ export default function Login() {
                 <div className={styles.transparencia}>
                     <div className={styles.container}>
                         <div className={styles.card}>
-                            <div className={styles.imgContainer}>
-                                {/* <Image
-                            src="/imagens_telas/6737457.png"
-                            alt="Imagem tela de login"
-                            className={styles.imgLogin}
-                            width={500}
-                            height={500}
-                        /> */}
-                            </div>
                             <form id="form" className={styles.conteudo} onSubmit={handleSubmit}>
                                 <h1 className={styles.login}>Login</h1>
                                 <input

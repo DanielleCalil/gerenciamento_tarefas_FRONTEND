@@ -1,14 +1,11 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-// import InputMask from 'react-input-mask';
 import styles from './page.module.css';
-import Image from 'next/image';
 import Link from 'next/link';
 import { IoEye, IoEyeOff, IoCheckmarkCircleOutline, IoAlertCircleOutline } from "react-icons/io5";
 
 import api from '../../services/api';
-
 
 export default function SignUp() {
     const router = useRouter();
@@ -62,8 +59,8 @@ export default function SignUp() {
     function validaNome() {
 
         let objTemp = {
-            validado: valSucesso, // css referente ao estado de validação
-            mensagem: [] // array de mensagens de validação
+            validado: valSucesso,
+            mensagem: []
         };
 
         if (usuario.nome === '') {
@@ -75,8 +72,8 @@ export default function SignUp() {
         }
 
         setValida(prevState => ({
-            ...prevState, // mantém os valores anteriores
-            nome: objTemp // atualiza apenas o campo 'nome'
+            ...prevState,
+            nome: objTemp
         }));
 
         const testeResult = objTemp.mensagem.length === 0 ? 1 : 0;
@@ -104,8 +101,8 @@ export default function SignUp() {
         }
 
         setValida(prevState => ({
-            ...prevState, // mantém os valores anteriores
-            email: objTemp // atualiza apenas o campo 'nome'
+            ...prevState,
+            email: objTemp
         }));
 
         const testeResult = objTemp.mensagem.length === 0 ? 1 : 0;
@@ -119,7 +116,6 @@ export default function SignUp() {
             mensagem: []
         };
 
-        // Expressão regular para validar a senha
         const senhaForteRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (usuario.senha === '') {
@@ -131,8 +127,8 @@ export default function SignUp() {
         }
 
         setValida(prevState => ({
-            ...prevState, // mantém os valores anteriores
-            senha: objTemp // atualiza apenas o campo 'senha'
+            ...prevState,
+            senha: objTemp
         }));
 
         const testeResult = objTemp.mensagem.length === 0 ? 1 : 0;
@@ -156,14 +152,13 @@ export default function SignUp() {
         }
 
         setValida(prevState => ({
-            ...prevState, // mantém os valores anteriores
-            confSenha: objTemp // atualiza apenas o campo 'nome'
+            ...prevState,
+            confSenha: objTemp
         }));
 
         const testeResult = objTemp.mensagem.length === 0 ? 1 : 0;
         return testeResult;
     }
-
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -190,8 +185,6 @@ export default function SignUp() {
             }
         }
     }
-    console.log(usuario);
-
 
     return (
         <div className="containerGlobal">
@@ -199,19 +192,9 @@ export default function SignUp() {
                 <div className={styles.transparencia}>
                     <div className={styles.container}>
                         <div className={styles.card}>
-                            {/* <div className={styles.imgContainer}>
-                        <Image
-                            src="/imagens_telas/img_cadastro.png"
-                            alt="Imagem tela de cadastro"
-                            className={styles.imgCadastro}
-                            width={500}
-                            height={453}
-                        />
-                        </div> */}
                             <div className={styles.conteudo}>
                                 <h1 className={styles.cadastro}>Cadastro</h1>
                                 <form id="form" onSubmit={handleSubmit}>
-
                                     <div className={valida.nome.validado + ' ' + styles.valNome} id="valNome">
                                         <div className={styles.divInput}>
                                             <input
@@ -228,7 +211,6 @@ export default function SignUp() {
                                             valida.nome.mensagem.map(mens => <small key={mens} id="nome" className={styles.small}>{mens}</small>)
                                         }
                                     </div>
-
                                     <div className={valida.email.validado + ' ' + styles.valNome} id="valEmail">
                                         <div className={styles.divInput}>
                                             <input
@@ -245,7 +227,6 @@ export default function SignUp() {
                                             valida.email.mensagem.map(mens => <small key={mens} id="email" className={styles.small}>{mens}</small>)
                                         }
                                     </div>
-
                                     <div className={styles.doisItens}>
                                         <div className={styles.passwordRow}>
                                             <div className={styles.passwordContainer}>
@@ -272,8 +253,6 @@ export default function SignUp() {
                                                     }
                                                 </div>
                                             </div>
-
-
                                             <div className={styles.passwordContainer}>
                                                 <div className={valida.confSenha.validado} id="validaSn2">
                                                     <div className={styles.divInput}>
@@ -300,11 +279,9 @@ export default function SignUp() {
                                             </div>
                                         </div>
                                     </div>
-
                                     <div className={styles.logar}>
                                         Já tem uma conta? <Link href="/login">Faça login</Link>
                                     </div>
-
                                     <button
                                         type="submit"
                                         onClick={handleSubmit}

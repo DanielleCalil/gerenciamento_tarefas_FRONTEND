@@ -157,12 +157,7 @@
     transition: 0.5s;
 }
 
-
-
-
 .errorMessage {
-    /* visibility: hidden;  */
-    /* display: none; */
     color: #e74c3c;
     font-size: 1.4rem;
     margin-top: 0.5rem;

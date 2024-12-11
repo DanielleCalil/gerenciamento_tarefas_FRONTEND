@@ -24,12 +24,12 @@ export default function Tarefas() {
 
   const handleEdtTarefa = (tarefas) => {
     setTarefaSelecionada(tarefas);
-    openModalEdtTarefa(); // Abre o modal
+    openModalEdtTarefa();
   };
 
   const handleCloseModal = () => {
-    setTarefaSelecionada(null); // Limpa os dados da tarefa
-    closeModalEdtTarefa(false); // Fecha o modal
+    setTarefaSelecionada(null);
+    closeModalEdtTarefa(false);
   };
 
   const [showModalEdtTarefa, setShowModalEdtTarefa] = useState(false);
@@ -70,44 +70,69 @@ export default function Tarefas() {
     }
   }, []);
 
-
   const valDefault = styles.formControl;
   const valSucesso = styles.formControl + ' ' + styles.success;
   const valErro = styles.formControl + ' ' + styles.error;
 
-  console.log("tarefa selecionada", tarefaSelecionada);
-
-
   useEffect(() => {
     const carregarTarefas = async () => {
-      const storedUser = localStorage.getItem('user');
-      const user = storedUser ? JSON.parse(storedUser) : null;
-
-      console.log("Usuário no localStorage:", user);
-
-      if (!user || typeof user.cod === 'undefined' || user.cod === null) {
-        console.log("Usuário não autenticado ou 'cod' inválido.");
-        router.push('/login');
-        return;
-      }
-
-      console.log("User Cod enviado na requisição:", user.cod);
+      let payload;
 
       try {
-        const payload = { userId: user.cod };
-        console.log("Payload enviado:", payload);
-
-        const response = await api.post('/tarefas', payload);
-        console.log("Tarefas recebidas:", response.data.dados);
-
-        if (JSON.stringify(response.data.dados) !== JSON.stringify(tarefas)) {
-          setTarefas(response.data.dados);
+        const storedUser = localStorage.getItem('user');
+        const user = parseUser(storedUser);
+        if (!user) {
+          router.push('/login');
+          return;
         }
-      } catch (error) {
+
+        payload = { userId: user.cod };
+
+        if (!payload.userId) {
+          console.error("Payload não contém um userId válido.", payload);
+          return;
+        }
+        const apiUrl = '/tarefas';
+        const response = await api.post(apiUrl, payload);
+
+        if (response.status === 200) {
+          const tarefasData = response.data.dados;
+
+          if (Array.isArray(tarefasData)) {
+            if (tarefasData.length === 0) {
+              setTarefas([]);
+            } else {
+              setTarefas(tarefasData);
+            }
+          } else {
+            console.warn("Formato inesperado em response.data.dados:", tarefasData);
+            setTarefas([]);
+          }
+        } else {
+          console.warn("Resposta inesperada do servidor:", response.status);
+          setTarefas([]);
+        }
+      } catch (apiError) {
         console.error(
-          "Erro ao carregar as tarefas",
-          error.response?.data || error.message
+          "Erro ao fazer a requisição para /tarefas",
+          apiError.response?.data || apiError.message,
+          apiError.stack || "Sem stack disponível",
+          "Payload enviado:", payload
         );
+        setTarefas([]);
+      }
+    };
+
+    const parseUser = (storedUser) => {
+      try {
+        const user = storedUser ? JSON.parse(storedUser) : null;
+        if (!user || typeof user.cod === 'undefined' || user.cod === null) {
+          return null;
+        }
+        return user;
+      } catch (e) {
+        console.error("Erro ao analisar o usuário do localStorage:", e.message);
+        return null;
       }
     };
 
@@ -123,20 +148,15 @@ export default function Tarefas() {
     }
   }, [filtroSituacao]);
 
-
   async function deletaTarefas(id) {
     const user = JSON.parse(localStorage.getItem('user'));
     try {
-      console.log('ID da tarefa:', id);
-      console.log('UserID:', user.cod);
 
       if (!id || !user.cod) {
         console.error('ID ou userId não fornecidos');
         alert('ID ou userId não fornecidos');
         return;
       }
-
-      console.log('Enviando ID da tarefa e userId:', id, user.cod);
 
       const response = await api.delete(`/tarefasDeletar/${id}`, {
         data: {
@@ -145,7 +165,6 @@ export default function Tarefas() {
       });
 
       if (response.data && response.data.sucesso) {
-        console.log('Tarefa excluída com sucesso:', id);
         setTarefas((prevTarefas) => {
           const tarefasAtualizadas = Array.isArray(prevTarefas) ? prevTarefas : [];
           return tarefasAtualizadas.filter((tarefa) => tarefa.id !== id);
@@ -163,7 +182,6 @@ export default function Tarefas() {
     }
   }
 
-
   async function confirmarTarefa(id) {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !user.cod) {
@@ -171,25 +189,17 @@ export default function Tarefas() {
       alert('User ou user.cod não encontrados');
       return;
     }
-  
+
     try {
-      console.log('ID da tarefa:', id);
-      console.log('UserID:', user.cod);
-  
-      console.log('Enviando ID da tarefa e userId:', id, user.cod);
-  
       const response = await api.patch(`/tarefasConfirmar/${id}`, {
         userId: user.cod
       });
-  
+
       if (response.status === 200 && response.data.sucesso) {
-        console.log('Tarefa concluída com sucesso:', id);
-  
-        setTarefas((prevTarefas) =>
-          prevTarefas.map((tarefa) =>
-            tarefa.id === id ? { ...tarefa, concluida: true } : tarefa
-          )
-        );
+        setTarefas((prevTarefas) => {
+          const tarefasAtualizadas = Array.isArray(prevTarefas) ? prevTarefas : [];
+          return tarefasAtualizadas.filter((tarefa) => tarefa.id !== id);
+        });
       } else {
         console.error('Erro ao concluir a tarefa:', response.data.mensagem);
         alert(response.data.mensagem);
@@ -206,7 +216,7 @@ export default function Tarefas() {
       }
     }
   }
-  
+
   const [valida, setValida] = useState({
     titulo: {
       validado: valDefault,
@@ -270,7 +280,6 @@ export default function Tarefas() {
 
     if (itensValidados === 2) {
       const user = JSON.parse(localStorage.getItem('user'));
-      console.log('User recuperado do localStorage:', user);
 
       if (!user || !user.cod) {
         alert('ID do usuário não encontrado. Por favor, faça login.');
@@ -286,7 +295,6 @@ export default function Tarefas() {
 
       try {
         const response = await api.post('/tarefasCadastrar', tarefaComId);
-        console.log('Resposta da API:', response);
 
         if (response.data.sucesso) {
           alert('Tarefa cadastrada com sucesso!');
@@ -301,7 +309,6 @@ export default function Tarefas() {
           setNovaTarefa({ titulo: '', descricao: '' });
         }
       } catch (error) {
-        console.log('Erro na requisição:', error);
         if (error.response) {
           alert(error.response.data.mensagem + '\n' + error.response.data.dados);
         } else {
@@ -310,7 +317,6 @@ export default function Tarefas() {
       }
     }
   }
-  console.log(tarefas);
 
   return (
     <div className="containerGlobal">
@@ -347,7 +353,6 @@ export default function Tarefas() {
                 <div className={styles.inputContainer}>
                   <div className={styles.inputGroup}>
                     <div className={styles.inputFlex}>
-
                       <div className={styles.inputMargin}>
                         <span className={styles.titleSuperior}>Título da tarefa:</span>
                         <div className={valida.titulo.validado + ' ' + styles.valTitulo} id="valTitulo">
@@ -368,7 +373,6 @@ export default function Tarefas() {
                           }
                         </div>
                       </div>
-
                       <div className={styles.editar}>
                         <button
                           type="submit"
@@ -378,7 +382,6 @@ export default function Tarefas() {
                         </button>
                       </div>
                     </div>
-
                     <div className={styles.inputMargin}>
                       <span className={styles.titleSuperior}>Descrição da tarefa:</span>
                       <div className={valida.descricao.validado + ' ' + styles.validaDescricao} id="valDescricao">
@@ -399,11 +402,9 @@ export default function Tarefas() {
                         }
                       </div>
                     </div>
-
                   </div>
                 </div>
               </form>
-
               <div className={styles.situacaoButtons}>
                 {situacaoOptions.map(status => (
                   <div
@@ -422,35 +423,36 @@ export default function Tarefas() {
                   </div>
                 ))}
               </div>
-
               <div className={styles.container}>
                 <div className={styles.alinhamento}>
                   {Array.isArray(tarefas) && tarefas.filter(tarefa => !filtroSituacao || tarefa.status === filtroSituacao).length === 0 ? (
                     <h1>Nenhuma tarefa encontrada. Selecione um filtro.</h1>
                   ) : (
-                    Array.isArray(tarefas) && tarefas.filter(tarefa => !filtroSituacao || tarefa.status === filtroSituacao).map(tarefa => (
-                      <div className={styles.Item} key={tarefa.id}> {/* Aqui o 'key' foi adicionado */}
-                        <div className={styles.Info}>
-                          <div className={styles.buttons}>
-                            <button onClick={() => deletaTarefas(tarefa.id, tarefa.userId)} className={styles.excluirTarefa}>X</button>
-                            <button type='button' onClick={() => handleEdtTarefa(tarefa)} className={styles.editarTarefa}>
-                              <IoPencilSharp size={18} color='#FFF' />
-                            </button>
-                            <ModalEdtTarefa
-                              show={showModalEdtTarefa}
-                              onClose={closeModalEdtTarefa}
-                              onConfirm={handleTarefa}
-                              inform={tarefaSelecionada}
-                            />
+                    Array.isArray(tarefas) && tarefas
+                      .filter(tarefa => !filtroSituacao || tarefa.status === filtroSituacao)
+                      .map(tarefa => (
+                        <div className={styles.Item} key={tarefa.id}> {/* 'key' adicionada aqui */}
+                          <div className={styles.Info}>
+                            <div className={styles.buttons}>
+                              <button onClick={() => deletaTarefas(tarefa.id, tarefa.userId)} className={styles.excluirTarefa}>X</button>
+                              <button type='button' onClick={() => handleEdtTarefa(tarefa)} className={styles.editarTarefa}>
+                                <IoPencilSharp size={18} color='#FFF' />
+                              </button>
+                              <ModalEdtTarefa
+                                show={showModalEdtTarefa}
+                                onClose={closeModalEdtTarefa}
+                                onConfirm={handleTarefa}
+                                inform={tarefaSelecionada}
+                              />
+                            </div>
+                            <h2 className={styles.Title}>{tarefa.titulo}</h2>
+                            <p className={styles.Description}>{tarefa.descricao}</p>
+                            {tarefa.status !== 'concluida' && (
+                              <button onClick={() => confirmarTarefa(tarefa.id)} className={styles.confirmarTarefa}>Concluir</button>
+                            )}
                           </div>
-                          <h2 className={styles.Title}>{tarefa.titulo}</h2>
-                          <p className={styles.Description}>{tarefa.descricao}</p>
-                          {tarefa.status !== 'concluida' && (
-                            <button onClick={() => confirmarTarefa(tarefa.id)} className={styles.confirmarTarefa}>Concluir</button>
-                          )}
                         </div>
-                      </div>
-                    ))
+                      ))
                   )}
                 </div>
               </div>

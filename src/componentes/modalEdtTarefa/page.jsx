@@ -12,9 +12,9 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
 
     useEffect(() => {
         if (inform) {
-          setEdtTarefa(inform);
+            setEdtTarefa(inform);
         }
-      }, [inform]);
+    }, [inform]);
 
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -24,7 +24,6 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
         descricao: "",
         status: ""
     });
-    const [tarefaEditada, setTarefaEditada] = useState({ titulo: '', descricao: '' });
 
     const valDefault = styles.formControl;
     const valSucesso = styles.formControl + ' ' + styles.success;
@@ -89,16 +88,14 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
     async function handleSubmit(event) {
         event.preventDefault();
         let itensValidados = 0;
-    
+
         itensValidados += validaTitulo();
         itensValidados += validaDescricao();
-    
+
         if (itensValidados === 2) {
-            console.log("id do user:", user.cod);
-            console.log("id da tarefa:", edtTarefa.id);
-    
+
             let response;
-    
+
             let edtComId = {
                 userId: user.cod,
                 id: edtTarefa.id,
@@ -106,15 +103,14 @@ export default function ModalEditarTarefa({ show, onClose, inform }) {
                 descricao: edtTarefa.descricao,
                 status: edtTarefa.status,
             };
-    
+
             try {
-                console.log("ID da tarefa:", edtTarefa.id);
                 if (edtTarefa.id) {
                     response = await api.patch(`/tarefasEditar/${edtTarefa.id}`, edtComId);
                 } else {
                     alert("ID da tarefa não encontrado");
                 }
-    
+
                 if (response.data.sucesso) {
                     alert("Tarefa editada com sucesso!");
                     setEdtTarefa((prevEdtTarefas) => {

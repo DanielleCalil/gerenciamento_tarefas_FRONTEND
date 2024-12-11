@@ -19,7 +19,6 @@ export default function Perfil() {
             router.push('/login');
         } else {
             carregaPerfil(user.cod);
-            // console.log(user.cod);            
         }
 
     }, []);
@@ -27,38 +26,24 @@ export default function Perfil() {
     async function carregaPerfil() {
         const storedUser = localStorage.getItem('user');
         const user = storedUser ? JSON.parse(storedUser) : null;
-    
-        console.log("Usuário no localStorage:", user);
-    
+
         if (!user || typeof user.cod === 'undefined' || user.cod === null) {
-          console.log("Usuário não autenticado ou 'cod' inválido.");
-          router.push('/login');
-          return;
+            router.push('/login');
+            return;
         }
-    
-        console.log("User Cod enviado na requisição:", user.cod);
-    
-        
-    
+
         try {
             const dados = { id: user.cod };
-            const response = await api.post('/usuarios', dados); 
-    
-            console.log(response.data.dados);  // Exibe os dados retornados do servidor
-            setPerfil(response.data.dados);  // Atualiza o perfil do usuário na interface
+            const response = await api.post('/usuarios', dados);
+            setPerfil(response.data.dados);
         } catch (error) {
             if (error.response) {
-                // Erro retornado pelo backend
                 alert(`Erro: ${error.response.data.mensagem}\nDetalhes: ${error.response.data.dados}`);
             } else {
-                // Erro no frontend (na comunicação com o backend)
                 alert('Erro no front-end: ' + error);
             }
         }
     }
-    
-
-
 
     return (
         <div className="containerGlobal">
@@ -84,7 +69,6 @@ export default function Perfil() {
                                                 </div>
                                             </div>
                                             <div className={styles.inputContainer}>
-
                                                 <div className={styles.inputGroup}>
                                                     <label className={styles.textInput}>Nome completo:</label>
                                                     <p className={styles.infos}>{infoUsu.nome}</p>
@@ -93,7 +77,6 @@ export default function Perfil() {
                                                     <label className={styles.textInput}>E-mail:</label>
                                                     <p className={styles.infos}>{infoUsu.email}</p>
                                                 </div>
-
                                             </div>
                                         </div>
                                         <div className={styles.editar}>

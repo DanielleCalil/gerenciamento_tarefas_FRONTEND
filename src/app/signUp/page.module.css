@@ -119,8 +119,6 @@
 }
 
 .sucesso {
-  /* position: absolute;
-      right: 20%;  */
   display: none;
   margin-left: 0.5rem;
   font-size: 2.7rem;
@@ -128,7 +126,6 @@
 }
 
 .erro {
-  /* visibility: hidden; */
   display: none;
   margin-left: 0.5rem;
   font-size: 2.7rem;
@@ -141,20 +138,16 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  /* gap: 0.5rem;  */
 }
 
 .passwordContainer {
   position: relative;
   flex-grow: 1;
-  /* Garante que os campos de senha ocupem o mesmo espaço */
 }
 
 .passwordContainer input {
   width: 80%;
-  /* Faz os inputs ocuparem a largura total do container */
   height: 4.6rem;
-  /* Mesma altura dos outros inputs */
   padding: 1rem 2rem;
   border: 1px solid #ccc;
   border-radius: 3rem;
@@ -166,65 +159,9 @@
   position: absolute;
   right: 55px;
   top: 40%;
-  /* transform: translateY(-50%); */
   cursor: pointer;
   color: #000;
   font-size: 2rem;
-}
-
-.sexoForm {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3rem;
-  margin-top: 1.5rem;
-  font-weight: 300;
-  font-size: 1.4rem;
-  flex-direction: row;
-}
-
-.sexoForm legend {
-  margin: 0;
-  padding-right: 0.625rem;
-  font-weight: 300;
-  font-size: 1.4rem;
-}
-
-.sexoForm label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Estilizando o radio button personalizado */
-.sexoForm input[type="radio"] {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 50%;
-  background: #fff;
-  cursor: pointer;
-  position: relative;
-  margin: 0;
-}
-
-.sexoForm input[type="radio"]:checked {
-  border: 1px solid #FF735C;
-  background-color: #FF735C;
-}
-
-.sexoForm input[type="radio"]:checked::before {
-  content: '';
-  display: block;
-  border-radius: 50%;
-  background-color: #fff;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .logar {
@@ -283,8 +220,6 @@
 }
 
 .small {
-  /* visibility: hidden;  */
-  /* display: none; */
   color: #e74c3c;
   font-size: 1.4rem;
   margin-top: 0.5rem;
@@ -318,7 +253,6 @@
   border-color: #B71C1C;
 }
 
-/* Error and Success */
 .formControl.success input {
   border-color: #2ecc71;
 }
@@ -328,17 +262,14 @@
 }
 
 .formControl.success .divInput .sucesso {
-  /* visibility: visible; */
   display: block;
 }
 
 .formControl.error .divInput .erro {
   display: block;
-  /* visibility: visible; */
 }
 
 .formControl.error small {
-  /* visibility: visible; */
   display: block;
 }
 

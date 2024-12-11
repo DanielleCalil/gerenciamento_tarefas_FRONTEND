@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'SmoakBook';
+const STORAGE_KEY = 'Gerenciamento Tarefas';
 
 /* 
     Tranforma o retorno de getItem em um booleano, assim se houver algum valor em STORAGE_KEY o retorno é verdadeiro. 

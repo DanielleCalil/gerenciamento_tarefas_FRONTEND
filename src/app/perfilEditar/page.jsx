@@ -25,21 +25,6 @@ export default function PerfilEditar({ codUsu }) {
         senha: null,
     });
 
-    const [showModalConfirm, setShowModalConfirm] = useState(false);
-
-    const openModalConfirm = () => setShowModalConfirm(true);
-    const closeModalConfirm = () => setShowModalConfirm(false);
-
-    const handleConfirm = async () => {
-        try {
-            closeModalConfirm();
-            await handleSave();
-        } catch (error) {
-            console.error("Erro ao confirmar a ação:", error);
-            alert('Ocorreu um erro ao tentar salvar. Por favor, tente novamente.');
-        }
-    };
-
     useEffect(() => {
         if (!codUsu) return;
 
@@ -52,7 +37,6 @@ export default function PerfilEditar({ codUsu }) {
             const response = await api.post('/usuarios', dados);
             if (response.data.sucesso) {
                 const edtPerfilApi = response.data.dados[0];
-                // console.log("Perfil carregado:", edtPerfilApi);
                 setPerfilEdt(edtPerfilApi);
             } else {
                 alert(response.data.mensagem);
@@ -60,11 +44,6 @@ export default function PerfilEditar({ codUsu }) {
         } catch (error) {
             alert(error.response ? error.response.data.mensagem : 'Erro no front-end');
         }
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setPerfilEdt(prev => ({ ...prev, [name]: value }));
     }
 
     const handleSave = async () => {
@@ -75,7 +54,7 @@ export default function PerfilEditar({ codUsu }) {
             return;
         }
 
-        setIsSaving(true); // Inicia o salvamento
+        setIsSaving(true);
 
         try {
             const response = await api.patch(`/usuariosEditar/${perfilEdt.id}`, {
@@ -115,9 +94,7 @@ export default function PerfilEditar({ codUsu }) {
                                         />
                                     </div>
                                 </div>
-
                                 <div className={styles.inputContainer}>
-
                                     <div className={styles.inputGroup}>
                                         <p className={styles.textInput}>Nome completo:</p>
                                         <input
@@ -141,11 +118,9 @@ export default function PerfilEditar({ codUsu }) {
                                     </div>
                                 </div>
                             </div>
-
                         ) : (
                             <h1 className={styles.aviso}>Não há resultados para a requisição</h1>
                         )}
-
                         <div className={styles.editar}>
                             <button
                                 type="submit"
